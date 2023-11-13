@@ -1,24 +1,26 @@
 #!/usr/bin/env ruby
 
-WOLFBUCK_RANGE_PER_WEEK = 4..10
+WOLFBUCK_RANGE_PER_WEEK = 6..10
 WINNERS_PER_DRAWING = 15
 OTHER_KIDS = (1..80).map(&:to_s)
 RAFFLES_PER_YEAR = 36
-MONTE_CARLO_SIMULATIONS = 1000
+ITERATIONS = 5000
 
 def run_simulations
-  $stdout.puts "Simulations: #{MONTE_CARLO_SIMULATIONS}\n\n"
+  $stdout.puts "Wolf Buck Monte Carlo"
+  $stdout.puts "Simulations: #{ITERATIONS}\n\n"
   $stdout.puts "Prizes per year:\n"
 
-  # strategy 1: turn in immediately
   run_simulation("Turn in immediately") { 1 }
 
-  # strategy 2: save until end of the month
+  run_simulation("Turn in every 2 weeks") do |raffle_number|
+    ((raffle_number - 1) % 2 == 0) ? 2 : 0
+  end
+
   run_simulation("Save until end of month") do |raffle_number|
     ((raffle_number - 3) % 4 == 0) ? 4 : 0
   end
 
-  # strategy 3: save until end of the school year
   run_simulation("Save until end of year") do |raffle_number|
     (raffle_number == RAFFLES_PER_YEAR - 1) ? RAFFLES_PER_YEAR : 0
   end
@@ -26,11 +28,9 @@ end
 
 def run_simulation(description, &block)
   $stdout.print "#{description}: "
-  prizes = MONTE_CARLO_SIMULATIONS.times.sum do
-    simulate_year(&block)
-  end
-  avg_prizes_per_year = prizes.to_f / MONTE_CARLO_SIMULATIONS
-  $stdout.puts avg_prizes_per_year
+  prizes = ITERATIONS.times.sum { simulate_year(&block) }
+  avg_prizes_per_year = prizes.to_f / ITERATIONS
+  $stdout.puts avg_prizes_per_year.round
 end
 
 def simulate_year(&block)
