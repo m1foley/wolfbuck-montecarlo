@@ -5,7 +5,7 @@ WINNERS_PER_DRAWING = 15
 OTHER_KIDS = (1..80).map(&:to_s)
 RAFFLES_PER_YEAR = 36
 ITERATIONS = 500
-OUR_STUDENT = Object.new
+OUR_STUDENT = "Us"
 
 def run_simulations
   $stdout.puts "Wolf Buck Monte Carlo"
