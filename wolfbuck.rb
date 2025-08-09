@@ -4,7 +4,8 @@ WOLFBUCK_RANGE_PER_WEEK = 6..10
 WINNERS_PER_DRAWING = 15
 OTHER_KIDS = (1..80).map(&:to_s)
 RAFFLES_PER_YEAR = 36
-ITERATIONS = 5000
+ITERATIONS = 500
+OUR_STUDENT = Object.new
 
 def run_simulations
   $stdout.puts "Wolf Buck Monte Carlo"
@@ -36,16 +37,16 @@ end
 def simulate_year(&block)
   RAFFLES_PER_YEAR.times.count do |raffle_number|
     weekly_wolfbucks_multiplier = block.call(raffle_number)
-    madeline_wolfbucks_per_drawing = (WOLFBUCK_RANGE_PER_WEEK.min * weekly_wolfbucks_multiplier)..(WOLFBUCK_RANGE_PER_WEEK.max * weekly_wolfbucks_multiplier)
-    wolfbucks = generate_wolfbucks(madeline_wolfbucks_per_drawing)
+    our_wolfbucks_per_drawing = (WOLFBUCK_RANGE_PER_WEEK.min * weekly_wolfbucks_multiplier)..(WOLFBUCK_RANGE_PER_WEEK.max * weekly_wolfbucks_multiplier)
+    wolfbucks = generate_wolfbucks(our_wolfbucks_per_drawing)
     winners = pick_winners(wolfbucks)
-    winners.include?("Madeline")
+    winners.include?(OUR_STUDENT)
   end
 end
 
-def generate_wolfbucks(madeline_wolfbucks_per_drawing)
+def generate_wolfbucks(our_wolfbucks_per_drawing)
   wolfbucks = []
-  wolfbucks += ["Madeline"] * madeline_wolfbucks_per_drawing.to_a.sample
+  wolfbucks += [OUR_STUDENT] * our_wolfbucks_per_drawing.to_a.sample
   OTHER_KIDS.each do |kid|
     wolfbucks += [kid] * WOLFBUCK_RANGE_PER_WEEK.to_a.sample
   end
